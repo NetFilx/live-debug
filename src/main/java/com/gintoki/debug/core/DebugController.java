@@ -37,16 +37,16 @@ public class DebugController {
     }
 
     @PostMapping("/execute")
-    public String execute(@RequestBody String script) {
+    public Response<String> execute(@RequestBody String script) {
         try {
             // TODO 重复执行的话 可以提供缓存
             Script s = shell.parse(script);
             String res = String.valueOf(s.run());
             // 防止perm区爆炸
             shell.getClassLoader().clearCache();
-            return res;
+            return Response.success(res);
         } catch (Exception e) {
-            return "脚本出错";
+            return Response.fail("脚本存在问题，请排查");
         }
 
     }
