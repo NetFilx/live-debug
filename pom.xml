@@ -48,6 +48,28 @@
         </dependency>
     </dependencies>
 
+    <distributionManagement>
+        <repository>
+            <id>maven-releases</id>
+            <url>http://nexus.infra.ahotels.tech/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>maven-snapshots</id>
+            <url>http://nexus.infra.ahotels.tech/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>maven-releases</id>
+            <url>http://nexus.infra.ahotels.tech/repository/maven-releases/</url>
+        </repository>
+        <repository>
+            <id>maven-snapshots</id>
+            <url>http://nexus.infra.ahotels.tech/repository/maven-snapshots/</url>
+        </repository>
+    </repositories>
+
     <build>
         <plugins>
             <plugin>
