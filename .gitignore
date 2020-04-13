@@ -29,3 +29,43 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+live-debug-page/**/node_modules
+# roadhog-api-doc ignore
+live-debug-page/src/utils/request-temp.js
+_roadhog-api-doc
+
+# production
+live-debug-page/dist
+live-debug-page/.vscode
+
+# misc
+live-debug-page/.DS_Store
+live-debug-page/npm-debug.log*
+live-debug-page/yarn-error.log
+
+/coverage
+.idea
+live-debug-page/yarn.lock
+live-debug-page/package-lock.json
+live-debug-page/*bak
+
+# visual studio code
+live-debug-page/.history
+live-debug-page/*.log
+live-debug-page/functions/*
+live-debug-page/.temp/**
+
+# umi
+live-debug-page/.umi
+live-debug-page/.umi-production
+
+# screenshot
+live-debug-page/screenshot
+live-debug-page/.firebase
+live-debug-page/.eslintcache
+
+live-debug-page/build

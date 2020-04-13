@@ -4,12 +4,11 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -21,8 +20,8 @@ import java.nio.charset.StandardCharsets;
 @RequestMapping("/debug")
 public class DebugController {
 
-    @Autowired
-    private Binding binding;
+    @Resource
+    private Binding groovyBinding;
 
     private GroovyShell shell;
 
@@ -33,14 +32,15 @@ public class DebugController {
         conf.setSourceEncoding(StandardCharsets.UTF_8.name());
         conf.setScriptBaseClass(DebugScript.class.getName());
 
-        shell = new GroovyShell(gcl, binding, conf);
+        shell = new GroovyShell(gcl, groovyBinding, conf);
     }
 
     @PostMapping("/execute")
-    public Response<String> execute(@RequestBody String script) {
+    @ResponseBody
+    public Response<String> execute(@RequestBody DebugRequest request) {
         try {
             // TODO 重复执行的话 可以提供缓存
-            Script s = shell.parse(script);
+            Script s = shell.parse(request.getScript());
             String res = String.valueOf(s.run());
             // 防止perm区爆炸
             shell.getClassLoader().clearCache();
