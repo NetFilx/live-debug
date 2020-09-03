@@ -24,10 +24,7 @@ public class DebugBindingConfig implements ApplicationContextAware {
         context = applicationContext;
     }
 
-    @Bean("groovyBinding")
-    public Binding groovyBinding() {
-        Map<String, Object> bm = context.getBeansOfType(Object.class);
-        // 获取所有的bean对象
-        return new Binding(bm);
+    public Map<String, Object> getBeans() {
+        return context.getBeansOfType(Object.class);
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 /**
  * 脚本执行器
@@ -22,20 +23,22 @@ import java.nio.charset.StandardCharsets;
 public class ScriptExecutor {
 
     @Resource
-    private Binding groovyBinding;
+    private DebugBindingConfig debugBindingConfig;
 
     private GroovyShell shell;
 
-    private boolean isInit;
+    private volatile boolean isInit;
 
-    @PostConstruct
+    private byte[] lock = new byte[0];
+
     public void init() {
         try {
             GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
             CompilerConfiguration conf = new CompilerConfiguration();
             conf.setSourceEncoding(StandardCharsets.UTF_8.name());
             conf.setScriptBaseClass(DebugScript.class.getName());
-            shell = new GroovyShell(gcl, groovyBinding, conf);
+            Map<String, Object> bm = debugBindingConfig.getBeans();
+            shell = new GroovyShell(gcl, new Binding(bm), conf);
             isInit = true;
         } catch (Exception e) {
             isInit = false;
@@ -43,8 +46,12 @@ public class ScriptExecutor {
     }
 
     public Response<String> execute(String script) {
-        if (isInit) {
-            return Response.fail("scriptExecutor init fail");
+        if (!isInit) {
+            synchronized (lock) {
+                if (!isInit) {
+                    init();
+                }
+            }
         }
         try {
             // TODO 重复执行的话 可以提供缓存
