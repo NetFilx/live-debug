@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import java.util.Map;
 
 /**
- * @author  wyh 吴永涵
- * @date  2020/3/31 3:37 下午
- * @description  
+ * @author wyh 吴永涵
+ * @date 2020/3/31 3:37 下午
+ * @description
  */
 @Configuration
 public class DebugBindingConfig implements ApplicationContextAware {

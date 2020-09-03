@@ -30,6 +30,24 @@
             <artifactId>groovy-all</artifactId>
             <version>2.4.7</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>2.6.5</version>
+            <scope>provided</scope>
+            <exclusions>
+                <!-- 4.3.16.RELEASE -->
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+                <!-- 3.2.5.Final -->
+                <exclusion>
+                    <groupId>org.jboss.netty</groupId>
+                    <artifactId>netty</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
 
     <distributionManagement>

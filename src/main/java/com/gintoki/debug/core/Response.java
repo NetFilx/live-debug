@@ -3,9 +3,9 @@ package com.gintoki.debug.core;
 import java.io.Serializable;
 
 /**
- * @author  wyh 吴永涵
- * @date  2020/3/31 4:57 下午
- * @description  
+ * @author wyh 吴永涵
+ * @date 2020/3/31 4:57 下午
+ * @description
  */
 public class Response<T> implements Serializable {
     private static final long serialVersionUID = 14977812506708359L;
