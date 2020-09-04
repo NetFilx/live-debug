@@ -20,8 +20,12 @@ public class DubboServiceImpl implements DubboService {
     private ScriptExecutor scriptExecutor;
 
     @Override
-    public Response<String> execute(String script) {
-        return scriptExecutor.execute(script);
+    public String execute(String script) {
+        Response<String> res = scriptExecutor.execute(script);
+        if (res.getSuccess()) {
+            return res.getData();
+        }
+        return res.getMsg();
     }
 
 }

@@ -15,6 +15,7 @@ import groovy.lang.Script;
 import groovy.util.logging.Slf4j;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
@@ -45,7 +46,7 @@ public class DebugController {
     @ResponseBody
     public Response<String> execute(@RequestBody DebugRequest request) {
         // 本地调用
-        if (appName.equals(request.getAppName())) {
+        if (StringUtils.isEmpty(request.getAppName()) || appName.equals(request.getAppName())) {
             return scriptExecutor.execute(request.getScript());
         }
 
@@ -68,6 +69,7 @@ public class DebugController {
             ac.setRegistry(rc);
             ReferenceConfig<GenericService> reference = new ReferenceConfig<GenericService>();
             reference.setInterface("com.gintoki.debug.rpc.dubbo.DubboService");
+            reference.setVersion("1.0.0");
             reference.setGeneric(true);
             reference.setApplication(ac);
             GenericService genericService = reference.get();

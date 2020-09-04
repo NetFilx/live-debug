@@ -1,10 +1,8 @@
 package com.gintoki.debug.core;
 
-import groovy.lang.Binding;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
@@ -17,14 +15,19 @@ import java.util.Map;
 @Configuration
 public class DebugBindingConfig implements ApplicationContextAware {
 
-    private ApplicationContext context;
+    private static ApplicationContext context;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        context = applicationContext;
+        DebugBindingConfig.context = applicationContext;
     }
 
     public Map<String, Object> getBeans() {
         return context.getBeansOfType(Object.class);
     }
+
+    public static ApplicationContext getApplicationContext() {
+        return context;
+    }
+
 }

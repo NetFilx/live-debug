@@ -27,33 +27,28 @@ public class ScriptExecutor {
 
     private GroovyShell shell;
 
-    private volatile boolean isInit;
+    private volatile boolean isInit = false;
 
-    private byte[] lock = new byte[0];
+    private final byte[] lock = new byte[0];
 
     public void init() {
-        try {
-            GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
-            CompilerConfiguration conf = new CompilerConfiguration();
-            conf.setSourceEncoding(StandardCharsets.UTF_8.name());
-            conf.setScriptBaseClass(DebugScript.class.getName());
-            Map<String, Object> bm = debugBindingConfig.getBeans();
-            shell = new GroovyShell(gcl, new Binding(bm), conf);
-            isInit = true;
-        } catch (Exception e) {
-            isInit = false;
-        }
+        GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
+        CompilerConfiguration conf = new CompilerConfiguration();
+        conf.setSourceEncoding(StandardCharsets.UTF_8.name());
+        conf.setScriptBaseClass(DebugScript.class.getName());
+        shell = new GroovyShell(gcl, conf);
+        isInit = true;
     }
 
     public Response<String> execute(String script) {
-        if (!isInit) {
-            synchronized (lock) {
-                if (!isInit) {
-                    init();
+        try {
+            if (!isInit) {
+                synchronized (lock) {
+                    if (!isInit) {
+                        init();
+                    }
                 }
             }
-        }
-        try {
             // TODO 重复执行的话 可以提供缓存
             Script s = shell.parse(script);
             String res = String.valueOf(s.run());

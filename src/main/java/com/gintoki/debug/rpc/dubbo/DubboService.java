@@ -9,6 +9,6 @@ import com.gintoki.debug.core.Response;
  */
 public interface DubboService {
 
-    public Response<String> execute(String script);
+    public String execute(String script);
 
 }
