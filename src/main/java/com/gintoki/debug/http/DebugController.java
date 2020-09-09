@@ -69,7 +69,7 @@ public class DebugController {
             ac.setRegistry(rc);
             ReferenceConfig<GenericService> reference = new ReferenceConfig<GenericService>();
             reference.setInterface("com.gintoki.debug.rpc.dubbo.DubboService");
-            reference.setVersion("1.0.0");
+            reference.setVersion(request.getAppName());
             reference.setGeneric(true);
             reference.setApplication(ac);
             GenericService genericService = reference.get();

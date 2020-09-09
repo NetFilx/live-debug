@@ -13,7 +13,7 @@ import javax.annotation.Resource;
  * @version 1.0
  * @time 2020/9/2 5:20 下午
  */
-@Service(version = "1.0.0")
+@Service(version = "${dubbo.application.name}")
 public class DubboServiceImpl implements DubboService {
 
     @Resource

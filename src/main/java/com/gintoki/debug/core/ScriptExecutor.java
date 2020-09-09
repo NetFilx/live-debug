@@ -4,7 +4,12 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import groovy.util.GroovyScriptEngine;
+import groovy.util.logging.Log;
+import groovy.util.logging.Slf4j;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -21,6 +26,7 @@ import java.util.Map;
  */
 @Component
 public class ScriptExecutor {
+    private static final Logger log = LoggerFactory.getLogger(ScriptExecutor.class);
 
     @Resource
     private DebugBindingConfig debugBindingConfig;
@@ -32,7 +38,11 @@ public class ScriptExecutor {
     private final byte[] lock = new byte[0];
 
     public void init() {
-        GroovyClassLoader gcl = new GroovyClassLoader(this.getClass().getClassLoader());
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        CompilerConfiguration config = new CompilerConfiguration();
+        config.setSourceEncoding(StandardCharsets.UTF_8.name());
+        GroovyClassLoader gcl = new GroovyClassLoader(contextClassLoader, config);
         CompilerConfiguration conf = new CompilerConfiguration();
         conf.setSourceEncoding(StandardCharsets.UTF_8.name());
         conf.setScriptBaseClass(DebugScript.class.getName());
@@ -56,6 +66,7 @@ public class ScriptExecutor {
             shell.getClassLoader().clearCache();
             return Response.success(res);
         } catch (Exception e) {
+            log.error("ScriptExecutor.exp, script:{}", script, e);
             return Response.fail("脚本存在问题，请排查" + e);
         }
     }
