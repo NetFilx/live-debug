@@ -1,8 +1,8 @@
 package com.gintoki.debug.rpc.dubbo;
 
 import com.alibaba.dubbo.config.annotation.Service;
-import com.gintoki.debug.core.Response;
-import com.gintoki.debug.core.ScriptExecutor;
+import com.gintoki.debug.core.ProbeResponse;
+import com.gintoki.debug.core.ProbeExecutor;
 
 import javax.annotation.Resource;
 
@@ -14,14 +14,14 @@ import javax.annotation.Resource;
  * @time 2020/9/2 5:20 下午
  */
 @Service(version = "${dubbo.application.name}")
-public class DubboServiceImpl implements DubboService {
+public class ProbeDubboServiceImpl implements ProbeDubboService {
 
     @Resource
-    private ScriptExecutor scriptExecutor;
+    private ProbeExecutor scriptExecutor;
 
     @Override
     public String execute(String script) {
-        Response<String> res = scriptExecutor.execute(script);
+        ProbeResponse<String> res = scriptExecutor.execute(script);
         if (res.getSuccess()) {
             return res.getData();
         }

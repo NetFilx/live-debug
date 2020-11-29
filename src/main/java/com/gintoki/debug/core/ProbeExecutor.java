@@ -1,21 +1,15 @@
 package com.gintoki.debug.core;
 
-import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-import groovy.util.GroovyScriptEngine;
-import groovy.util.logging.Log;
-import groovy.util.logging.Slf4j;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 
 /**
  * 脚本执行器
@@ -25,11 +19,11 @@ import java.util.Map;
  * @time 2020/9/3 11:55 上午
  */
 @Component
-public class ScriptExecutor {
-    private static final Logger log = LoggerFactory.getLogger(ScriptExecutor.class);
+public class ProbeExecutor {
+    private static final Logger log = LoggerFactory.getLogger(ProbeExecutor.class);
 
     @Resource
-    private DebugBindingConfig debugBindingConfig;
+    private ProbeContext probeContext;
 
     private GroovyShell shell;
 
@@ -45,12 +39,12 @@ public class ScriptExecutor {
         GroovyClassLoader gcl = new GroovyClassLoader(contextClassLoader, config);
         CompilerConfiguration conf = new CompilerConfiguration();
         conf.setSourceEncoding(StandardCharsets.UTF_8.name());
-        conf.setScriptBaseClass(DebugScript.class.getName());
+        conf.setScriptBaseClass(ProbeScript.class.getName());
         shell = new GroovyShell(gcl, conf);
         isInit = true;
     }
 
-    public Response<String> execute(String script) {
+    public ProbeResponse<String> execute(String script) {
         try {
             if (!isInit) {
                 synchronized (lock) {
@@ -64,10 +58,10 @@ public class ScriptExecutor {
             String res = String.valueOf(s.run());
             // 防止perm区爆炸
             shell.getClassLoader().clearCache();
-            return Response.success(res);
+            return ProbeResponse.success(res);
         } catch (Exception e) {
             log.error("ScriptExecutor.exp, script:{}", script, e);
-            return Response.fail("脚本存在问题，请排查" + e);
+            return ProbeResponse.fail("脚本存在问题，请排查" + e);
         }
     }
 

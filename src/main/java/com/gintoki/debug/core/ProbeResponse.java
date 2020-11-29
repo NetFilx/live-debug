@@ -7,7 +7,7 @@ import java.io.Serializable;
  * @date 2020/3/31 4:57 下午
  * @description
  */
-public class Response<T> implements Serializable {
+public class ProbeResponse<T> implements Serializable {
     private static final long serialVersionUID = 14977812506708359L;
 
     private T data;
@@ -16,7 +16,7 @@ public class Response<T> implements Serializable {
 
     private String msg;
 
-    public Response() {
+    public ProbeResponse() {
     }
 
     public T getData() {
@@ -43,15 +43,15 @@ public class Response<T> implements Serializable {
         this.msg = msg;
     }
 
-    public static <T> Response<T> success(T data) {
-        Response<T> r = new Response<>();
+    public static <T> ProbeResponse<T> success(T data) {
+        ProbeResponse<T> r = new ProbeResponse<>();
         r.setData(data);
         r.setSuccess(Boolean.TRUE);
         return r;
     }
 
-    public static <T> Response<T> fail(String msg) {
-        Response<T> r = new Response<>();
+    public static <T> ProbeResponse<T> fail(String msg) {
+        ProbeResponse<T> r = new ProbeResponse<>();
         r.setSuccess(Boolean.FALSE);
         r.setMsg(msg);
         return r;

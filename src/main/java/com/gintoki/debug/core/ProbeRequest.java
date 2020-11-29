@@ -5,16 +5,16 @@ package com.gintoki.debug.core;
  * @date 2020/4/3 1:11 下午
  * @description
  */
-public class DebugRequest {
+public class ProbeRequest {
 
     private String script;
 
     private String appName;
 
-    public DebugRequest() {
+    public ProbeRequest() {
     }
 
-    public DebugRequest(String script) {
+    public ProbeRequest(String script) {
         this.script = script;
     }
 

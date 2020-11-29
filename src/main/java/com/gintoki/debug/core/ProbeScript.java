@@ -7,7 +7,7 @@ import groovy.lang.Script;
  * @date 2020/3/31 3:46 下午
  * @description
  */
-public class DebugScript extends Script {
+public class ProbeScript extends Script {
     @Override
     public Object run() {
         return null;

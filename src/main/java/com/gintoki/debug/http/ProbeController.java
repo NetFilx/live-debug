@@ -4,24 +4,15 @@ import com.alibaba.dubbo.config.ApplicationConfig;
 import com.alibaba.dubbo.config.ReferenceConfig;
 import com.alibaba.dubbo.config.RegistryConfig;
 import com.alibaba.dubbo.rpc.service.GenericService;
-import com.gintoki.debug.core.DebugRequest;
-import com.gintoki.debug.core.DebugScript;
-import com.gintoki.debug.core.Response;
-import com.gintoki.debug.core.ScriptExecutor;
-import groovy.lang.Binding;
-import groovy.lang.GroovyClassLoader;
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
+import com.gintoki.debug.core.ProbeRequest;
+import com.gintoki.debug.core.ProbeResponse;
+import com.gintoki.debug.core.ProbeExecutor;
 import groovy.util.logging.Slf4j;
-import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.nio.charset.StandardCharsets;
-import java.rmi.registry.Registry;
 
 /**
  * @author wyh 吴永涵
@@ -31,10 +22,10 @@ import java.rmi.registry.Registry;
 @RestController
 @RequestMapping("/debug")
 @Slf4j
-public class DebugController {
+public class ProbeController {
 
     @Resource
-    private ScriptExecutor scriptExecutor;
+    private ProbeExecutor scriptExecutor;
 
     @Value("${dubbo.application.name}")
     private String appName;
@@ -44,7 +35,7 @@ public class DebugController {
 
     @PostMapping("/execute")
     @ResponseBody
-    public Response<String> execute(@RequestBody DebugRequest request) {
+    public ProbeResponse<String> execute(@RequestBody ProbeRequest request) {
         // 本地调用
         if (StringUtils.isEmpty(request.getAppName()) || appName.equals(request.getAppName())) {
             return scriptExecutor.execute(request.getScript());
@@ -60,7 +51,7 @@ public class DebugController {
      * @param request
      * @return
      */
-    private Response<String> dubboCall(DebugRequest request) {
+    private ProbeResponse<String> dubboCall(ProbeRequest request) {
         try {
             ApplicationConfig ac = new ApplicationConfig();
             ac.setName(request.getAppName());
@@ -74,9 +65,9 @@ public class DebugController {
             reference.setApplication(ac);
             GenericService genericService = reference.get();
             String res = (String) genericService.$invoke("execute", new String[]{String.class.getName()}, new Object[]{request.getScript()});
-            return Response.success(res);
+            return ProbeResponse.success(res);
         } catch (Exception e) {
-            return Response.fail("调用dubbo出错" + e.getMessage());
+            return ProbeResponse.fail("调用dubbo出错" + e.getMessage());
         }
     }
 
