@@ -55,6 +55,7 @@ public class ProbeExecutor {
             }
             // TODO 重复执行的话 可以提供缓存
             Script s = shell.parse(script);
+            s.setBinding(ProbeContext.getActiveBinding());
             String res = String.valueOf(s.run());
             // 防止perm区爆炸
             shell.getClassLoader().clearCache();

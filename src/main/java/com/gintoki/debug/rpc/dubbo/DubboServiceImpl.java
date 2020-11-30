@@ -14,7 +14,7 @@ import javax.annotation.Resource;
  * @time 2020/9/2 5:20 下午
  */
 @Service(version = "${dubbo.application.name}")
-public class ProbeDubboServiceImpl implements ProbeDubboService {
+public class DubboServiceImpl implements DubboService {
 
     @Resource
     private ProbeExecutor scriptExecutor;

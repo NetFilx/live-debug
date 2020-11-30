@@ -1,5 +1,8 @@
 package com.gintoki.debug.core;
 
+import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -18,9 +21,12 @@ public class ProbeProxy<T> {
 
     private final Map<String, Method> methodMap = new HashMap<>();
 
+    private final Map<String, Field> fieldMap = new HashMap<>();
+
     private ProbeProxy(T bean) {
         this.bean = bean;
         this.methodMapping();
+        this.fieldMapping();
     }
 
     public static <T> ProbeProxy<T> createBean(T bean) {
@@ -28,15 +34,27 @@ public class ProbeProxy<T> {
     }
 
     private void methodMapping() {
-        Method[] methods = bean.getClass().getMethods();
+        Method[] methods = ReflectionUtils.getAllDeclaredMethods(bean.getClass());
         for (Method method : methods) {
             method.setAccessible(Boolean.TRUE);
             methodMap.put(method.getName(), method);
         }
     }
 
+    private void fieldMapping() {
+        Field[] fields = bean.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(Boolean.TRUE);
+            fieldMap.put(field.getName(), field);
+        }
+    }
+
     public Map<String, Method> getMethodMap() {
-        return this.methodMap;
+        return methodMap;
+    }
+
+    public Map<String, Field> getFieldMap() {
+        return fieldMap;
     }
 
     public T getBean() {

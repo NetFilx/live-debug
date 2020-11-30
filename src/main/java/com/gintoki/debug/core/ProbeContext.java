@@ -7,7 +7,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -20,32 +19,41 @@ public class ProbeContext implements ApplicationContextAware {
 
     private static ApplicationContext context;
 
-    private final Map<String, Binding> bindingMap = new HashMap<>();
+    /**
+     * 当前活跃的binding
+     */
+    private static Binding activeBinding;
+
+    private static Map<String, Binding> bindingMap;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ProbeContext.context = applicationContext;
     }
 
-    public ProbeProxy getProxy(String beanName) {
+    public static ProbeProxy getProxy(String beanName) {
         Object bean = context.getBean(beanName);
         ProbeProxy proxy = ProbeProxy.createBean(bean);
-        bindingMap.putIfAbsent(bean.getClass().getName(), createBinding(proxy));
+        activeBinding = createBinding(proxy);
         return proxy;
     }
 
-    public <T> ProbeProxy<T> getProxy(Class<T> clazz) {
+    public static <T> ProbeProxy<T> getProxy(Class<T> clazz) {
         T bean = context.getBean(clazz);
         ProbeProxy<T> proxy = ProbeProxy.createBean(bean);
-        bindingMap.putIfAbsent(clazz.getName(), createBinding(proxy));
+        activeBinding = createBinding(proxy);
         return proxy;
     }
 
     private static <T> Binding createBinding(ProbeProxy<T> probeProxy) {
         Binding b = new Binding();
-        Map<String, Method> methodMap = probeProxy.getMethodMap();
-        methodMap.forEach(b::setVariable);
+        probeProxy.getMethodMap().forEach(b::setVariable);
+        probeProxy.getFieldMap().forEach(b::setVariable);
         return b;
+    }
+
+    public static Binding getActiveBinding() {
+        return activeBinding;
     }
 
     /**
